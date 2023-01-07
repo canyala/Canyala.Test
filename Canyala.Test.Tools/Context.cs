@@ -43,7 +43,21 @@ namespace Canyala.Test.Tools
         public static string TestFile(string fileName)
         {
             var applicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            return Path.Combine(Directory.GetParent(applicationBase).Parent.FullName, "TestFiles", fileName);
+
+            if (applicationBase is null)
+                throw new DirectoryNotFoundException(nameof(applicationBase));
+
+            var applicationBaseParentDirectory =  Directory.GetParent(applicationBase);
+
+            if (applicationBaseParentDirectory is null)
+                throw new DirectoryNotFoundException(nameof(applicationBaseParentDirectory));
+
+            var  applicationBaseParentRootDirectory = applicationBaseParentDirectory.Parent;
+
+            if (applicationBaseParentRootDirectory is null)
+                throw new DirectoryNotFoundException(nameof(applicationBaseParentRootDirectory));
+
+            return Path.Combine(applicationBaseParentRootDirectory.FullName, "TestFiles", fileName);
         }
 
         public static Temporary GetTemporary()
