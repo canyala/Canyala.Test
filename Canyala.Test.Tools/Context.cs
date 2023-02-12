@@ -52,12 +52,26 @@ namespace Canyala.Test.Tools
             if (applicationBaseParentDirectory is null)
                 throw new DirectoryNotFoundException(nameof(applicationBaseParentDirectory));
 
-            var  applicationBaseParentRootDirectory = applicationBaseParentDirectory.Parent;
+            var applicationBaseParentRootDirectory = applicationBaseParentDirectory.Parent;          
 
             if (applicationBaseParentRootDirectory is null)
                 throw new DirectoryNotFoundException(nameof(applicationBaseParentRootDirectory));
 
-            return Path.Combine(applicationBaseParentRootDirectory.FullName, "TestFiles", fileName);
+            if (applicationBaseParentRootDirectory.Name == "Debug" || applicationBaseParentRootDirectory.Name == "Release")
+                applicationBaseParentRootDirectory = applicationBaseParentRootDirectory.Parent;
+
+            if (applicationBaseParentRootDirectory is null)
+                throw new DirectoryNotFoundException(nameof(applicationBaseParentRootDirectory));
+
+            if (applicationBaseParentRootDirectory.Name == "bin")
+                applicationBaseParentRootDirectory = applicationBaseParentRootDirectory.Parent;
+
+            if (applicationBaseParentRootDirectory is null)
+                throw new DirectoryNotFoundException(nameof(applicationBaseParentRootDirectory));
+
+            var filePath = Path.Combine(applicationBaseParentRootDirectory.FullName, "TestFiles", fileName);
+
+            return filePath;
         }
 
         public static Temporary GetTemporary()
